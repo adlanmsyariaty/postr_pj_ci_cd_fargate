@@ -1,3 +1,5 @@
+TOPDIR := $(shell pwd)
+
 postgres:
 	docker run --name postgres14 --network postr-network -p 5433:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d postgres:14-alpine
 
@@ -17,10 +19,10 @@ migrateforce:
 	migrate -path db/migration -database "postgresql://postgres:postgres@localhost:5433/postr?sslmode=disable" force ${VERSION}
 
 sqlcinit:
-	docker run --rm -v //d/Project/postr_pj_ci_cd_fargate://src -w //src kjconroy/sqlc init
+	docker run --rm -v $(TOPDIR):/src -w /src kjconroy/sqlc init
 
 sqlcgenerate:
-	docker run --rm -v //d/Project/postr_pj_ci_cd_fargate://src -w //src kjconroy/sqlc generate
+	docker run --rm -v $(TOPDIR):/src -w /src kjconroy/sqlc generate
 
 server:
 	go run main.go
